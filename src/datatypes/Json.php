@@ -21,13 +21,13 @@ class Json extends DataType implements DataTypeInterface
 
     public function getFeed($url, $settings, $usePrimaryElement = true)
     {
-        $response = FeedMe::$plugin->data->getRawData($url);
+        $response = FeedMe::$plugin->data->getRawData($url, $settings['headers']);
 
         if (!$response['success']) {
             $error = 'Unable to reach ' . $url . '. Message: ' . $response['error'];
-            
+
             FeedMe::error($settings, $error);
-            
+
             return ['success' => false, 'error' => $error];
         }
 
@@ -55,7 +55,7 @@ class Json extends DataType implements DataTypeInterface
 
         // Look for and return only the items for primary element
         $primaryElement = Hash::get($settings, 'primaryElement');
-        
+
         if ($primaryElement && $usePrimaryElement) {
             $array = FeedMe::$plugin->data->findPrimaryElement($primaryElement, $array);
         }

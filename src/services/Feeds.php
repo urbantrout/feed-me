@@ -81,6 +81,7 @@ class Feeds extends Component
         $record->name               = $model->name;
         $record->feedUrl            = $model->feedUrl;
         $record->feedType           = $model->feedType;
+        $record->headers            = $model->headers;
         $record->primaryElement     = $model->primaryElement;
         $record->elementType        = $model->elementType;
         $record->siteId             = $model->siteId;
@@ -145,6 +146,7 @@ class Feeds extends Component
                 'name',
                 'feedUrl',
                 'feedType',
+                'headers',
                 'primaryElement',
                 'elementType',
                 'elementGroup',
@@ -166,6 +168,7 @@ class Feeds extends Component
             return null;
         }
 
+        $record['headers'] = Json::decode($record['headers']);
         $record['elementGroup'] = Json::decode($record['elementGroup']);
         $record['duplicateHandle'] = Json::decode($record['duplicateHandle']);
         $record['fieldMapping'] = Json::decode($record['fieldMapping']);

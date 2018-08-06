@@ -65,6 +65,25 @@
         required: true,
     }) }}
 
+    {{ forms.editableTableField({
+        label: "Additional Headers" | t('feed-me'),
+        instructions: 'Add HTTP headers to the request.' | t('feed-me'),
+        id: 'headers',
+        name: 'headers',
+        errors: feed.getErrors('headers'),
+        cols: [
+          {
+              heading: "Key" |t,
+              type: "singleline" |t
+          },
+          {
+              heading: "Value" |t,
+              type: "singleline" |t,
+          }
+        ],
+        rows: feed.headers
+    }) }}
+
     <hr>
 
     {% set elementsList = [] %}

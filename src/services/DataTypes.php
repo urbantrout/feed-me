@@ -30,7 +30,7 @@ class DataTypes extends Component
 
     const EVENT_REGISTER_FEED_ME_DATA_TYPES = 'registerFeedMeDataTypes';
     const EVENT_BEFORE_FETCH_FEED = 'onBeforeFetchFeed';
-    const EVENT_AFTER_FETCH_FEED = 'onAfterFetchFeed';    
+    const EVENT_AFTER_FETCH_FEED = 'onAfterFetchFeed';
 
 
     // Properties
@@ -116,7 +116,7 @@ class DataTypes extends Component
         return $dataType;
     }
 
-    public function getRawData($url)
+    public function getRawData($url, $headers = [])
     {
         $response = [];
 
@@ -148,6 +148,10 @@ class DataTypes extends Component
         try {
             $client = FeedMe::$plugin->service->createGuzzleClient();
             $options = FeedMe::$plugin->service->getRequestOptions();
+
+            // Merge with optional additional headers from feed settings.
+            $headers = array_combine(array_column($headers, 0), array_column($headers,1));
+            $options['headers'] = array_merge($options['headers'], $headers);
 
             $resp = $client->request('GET', $url, $options);
             $data = (string)$resp->getBody();
@@ -200,7 +204,7 @@ class DataTypes extends Component
         if (!is_array($data)) {
             return [];
         }
-        
+
         $mappingPaths = [];
 
         // Go through entire feed and grab all nodes - that way, its normalised across the entire feed

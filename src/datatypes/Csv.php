@@ -23,7 +23,7 @@ class Csv extends DataType implements DataTypeInterface
 
     public function getFeed($url, $settings, $usePrimaryElement = true)
     {
-        $response = FeedMe::$plugin->data->getRawData($url);
+        $response = FeedMe::$plugin->data->getRawData($url, $settings['headers']);
 
         $csvColumnDelimiter = FeedMe::$plugin->service->getConfig('csvColumnDelimiter') ?? ',';
 

@@ -17,6 +17,7 @@ class FeedModel extends Model
     public $name;
     public $feedUrl;
     public $feedType;
+    public $headers;
     public $primaryElement;
     public $elementType;
     public $elementGroup;
@@ -32,7 +33,7 @@ class FeedModel extends Model
 
     // Model-only properties
     public $debug;
-    
+
 
     // Public Methods
     // =========================================================================
@@ -44,7 +45,7 @@ class FeedModel extends Model
 
     public function getDuplicateHandleFriendly()
     {
-        return DuplicateHelper::getFrieldly($this->duplicateHandle);
+        return DuplicateHelper::getFriendly($this->duplicateHandle);
     }
 
     public function getDataType()
@@ -97,4 +98,3 @@ class FeedModel extends Model
 }
 
 
-  

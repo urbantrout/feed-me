@@ -95,7 +95,7 @@ class FeedsController extends Controller
         $variables['task'] = $this->_runImportTask($feed);
 
         if ($request->getParam('direct')) {
-            // If the user triggers this from the control panel (maybe for testing), triggering a task immediately will 
+            // If the user triggers this from the control panel (maybe for testing), triggering a task immediately will
             // lock up the browser session while it runs. In that case, we use JS to trigger the task (in _direct template)
             //
             // However, when triggering via Cron, run the task immediately, as Cron doesn't trigger JS (there's no browser)
@@ -196,7 +196,7 @@ class FeedsController extends Controller
     public function actionDebug()
     {
         $request = Craft::$app->getRequest();
-        
+
         $feedId = $request->getParam('feedId');
         $limit = $request->getParam('limit');
         $offset = $request->getParam('offset');
@@ -227,7 +227,7 @@ class FeedsController extends Controller
 
         // Are we running from the CP?
         if ($request->getIsCpRequest()) {
-            // if not using the direct param for this request, do UI stuff 
+            // if not using the direct param for this request, do UI stuff
             Craft::$app->getSession()->setNotice(Craft::t('feed-me', 'Feed processing started.'));
 
             // Create the import task
@@ -293,6 +293,7 @@ class FeedsController extends Controller
 
         $feed->name = $request->getBodyParam('name', $feed->name);
         $feed->feedUrl = $request->getBodyParam('feedUrl', $feed->feedUrl);
+        $feed->headers = $request->getBodyParam('headers', $feed->headers);
         $feed->feedType = $request->getBodyParam('feedType', $feed->feedType);
         $feed->primaryElement = $request->getBodyParam('primaryElement', $feed->primaryElement);
         $feed->elementType = $request->getBodyParam('elementType', $feed->elementType);

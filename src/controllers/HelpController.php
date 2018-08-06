@@ -95,7 +95,7 @@ class HelpController extends Controller
 
         // Create the SupportAttachment zip
         $zipPath = $tempFolder.'/'.StringHelper::UUID().'.zip';
-        
+
         try {
             $tempFileSettings = null;
             $tempFileFeed = null;
@@ -238,7 +238,7 @@ class HelpController extends Controller
             if (is_file($tempFileSettings)) {
                 FileHelper::unlink($tempFileSettings);
             }
-            
+
             if (is_file($tempFileFeed)) {
                 FileHelper::unlink($tempFileFeed);
             }

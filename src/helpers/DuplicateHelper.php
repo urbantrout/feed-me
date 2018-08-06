@@ -13,7 +13,7 @@ class DuplicateHelper
     // Public Methods
     // =========================================================================
 
-    public static function getFrieldly($handles)
+    public static function getFriendly($handles)
     {
         $array = [];
 

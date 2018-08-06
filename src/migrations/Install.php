@@ -32,6 +32,7 @@ class Install extends Migration
             'name'                 => $this->string()->notNull(),
             'feedUrl'              => $this->text()->notNull(),
             'feedType'             => $this->string(),
+            'headers'              => $this->text(),
             'primaryElement'       => $this->string(),
             'elementType'          => $this->string()->notNull(),
             'elementGroup'         => $this->text(),
