@@ -102,6 +102,17 @@
 
 
 {% set fieldsVariants = [{
+    name: 'Enabled',
+    handle: 'variant-enabled',
+    default: {
+        type: 'select',
+        options: [
+            { label: 'Don\'t import', value: '' },
+            { label: 'Enabled', value: '1' },
+            { label: 'Disabled', value: '0' },
+        ],
+    },
+}, {
     name: 'Title',
     handle: 'variant-title',
     required: true,
@@ -132,7 +143,6 @@
 }, {
     name: 'Unlimited Stock',
     handle: 'variant-hasUnlimitedStock',
-    required: true,
     default: {
         type: 'checkbox',
     },
@@ -262,7 +272,7 @@
                 {% set template = fieldClass.getMappingTemplate() %}
                 {% set handle = 'variant-' ~ field.handle %}
 
-                {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
+                {% set variables = { name: field.name, handle: handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
                 
                 {% include template ignore missing with variables only %}
             {% endfor %}

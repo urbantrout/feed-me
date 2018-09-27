@@ -74,6 +74,7 @@ class Assets extends Field implements FieldInterface
 
         $foundElements = [];
         $urlsToUpload = [];
+        $base64ToUpload = [];
 
         foreach ($value as $key => $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
@@ -86,7 +87,7 @@ class Assets extends Field implements FieldInterface
                 $foundElements = $value;
                 break;
             }
-            
+
             $query = AssetElement::find();
 
             // If we're uploading files, this will need to be an absolute URL. If it is, save until later.
@@ -100,6 +101,14 @@ class Assets extends Field implements FieldInterface
                 }
             }
 
+            // Check if the URL is actually an base64 encoded file.
+            $matches = [];
+            preg_match('/^data:\w+\/\w+;base64,/i', $dataValue, $matches);
+
+            if ($upload && count($matches) > 0) {
+                $base64ToUpload[$key] = $dataValue;
+            }
+
             $criteria['status'] = null;
             $criteria['folderId'] = $folderIds;
             $criteria['kind'] = $settings['allowedKinds'];
@@ -108,17 +117,25 @@ class Assets extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
-            $foundElements = array_merge($foundElements, $query->ids());
+            $ids = $query->ids();
+            $foundElements = array_merge($foundElements, $ids);
 
             // Are we uploading, and did we find existing assets? No need to process
-            if ($upload && $foundElements && $conflict === AssetElement::SCENARIO_INDEX) {
+            if ($upload && $ids && $conflict === AssetElement::SCENARIO_INDEX) {
                 unset($urlsToUpload[$key]);
             }
         }
 
-        if ($upload && $urlsToUpload) {
-            $uploadedElements = AssetHelper::fetchRemoteImage($urlsToUpload, $this->fieldInfo, $this->field, $this->element);
-            $foundElements = array_merge($foundElements, $uploadedElements);
+        if ($upload) {
+            if ($urlsToUpload) {
+                $uploadedElements = AssetHelper::fetchRemoteImage($urlsToUpload, $this->fieldInfo, $this->field, $this->element);
+                $foundElements = array_merge($foundElements, $uploadedElements);
+            }
+
+            if ($base64ToUpload) {
+                $uploadedElements = AssetHelper::createBase64Image($base64ToUpload, $this->fieldInfo, $this->field, $this->element);
+                $foundElements = array_merge($foundElements, $uploadedElements);
+            }
         }
 
         // Check for field limit - only return the specified amount

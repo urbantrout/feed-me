@@ -28,7 +28,7 @@
     {% if section %}
         {% set sectionEntryTypes = section.getEntryTypes() %}
     {% endif %}
-{% else %}
+{% elseif sections[0] %}
     {% set sectionEntryTypes = sections[0].getEntryTypes() ?? null %}
 {% endif %}
 

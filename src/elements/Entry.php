@@ -9,6 +9,7 @@ use verbb\feedme\helpers\DateHelper;
 use Craft;
 use craft\elements\Entry as EntryElement;
 use craft\elements\User as UserElement;
+use craft\helpers\Db;
 use craft\models\Section;
 
 use Cake\Utility\Hash;
@@ -134,7 +135,10 @@ class Entry extends Element implements ElementInterface
             $match = 'id';
         }
 
-        $element = EntryElement::findOne([$match => $value]);
+        $element = EntryElement::find()
+            ->status(null)
+            ->andWhere(['=', $match, Db::escapeParam($value)])
+            ->one();
 
         if ($element) {
             $this->element->newParentId = $element->id;
@@ -150,7 +154,7 @@ class Entry extends Element implements ElementInterface
             $element->typeId = $this->element->typeId;
 
             if (!Craft::$app->getElements()->saveElement($element)) {
-                throw new \Exception(json_encode($element->getErrors()));
+                FeedMe::error(null, 'Entry error: Could not create parent entry - ' . json_encode($element->getErrors()));
             }
 
             FeedMe::info(null, 'Entry ' . $element->id . ' added.');
@@ -165,6 +169,7 @@ class Entry extends Element implements ElementInterface
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $match = Hash::get($fieldInfo, 'options.match');
+        $create = Hash::get($fieldInfo, 'options.create');
 
         // Element lookups must have a value to match against
         if ($value === null || $value === '') {
@@ -176,13 +181,31 @@ class Entry extends Element implements ElementInterface
         }
 
         if ($match === 'fullName') {
-            $user = UserElement::findOne(['search' => $value]);
+            $element = UserElement::findOne(['search' => $value, 'status' => null]);
         } else {
-            $user = UserElement::findOne([$match => $value]);
+            $element = UserElement::find()
+                ->status(null)
+                ->andWhere(['=', $match, Db::escapeParam($value)])
+                ->one();
         }
 
-        if ($user) {
-            return $user->id;
+        if ($element) {
+            return $element->id;
+        }
+
+        // Check if we should create the element. But only if email is provided (for the moment)
+        if ($create && $match === 'email') {
+            $element = new UserElement();
+            $element->username = $value;
+            $element->email = $value;
+
+            if (!Craft::$app->getElements()->saveElement($element)) {
+                FeedMe::error(null, 'Entry error: Could not create author - ' . json_encode($element->getErrors()));
+            }
+
+            FeedMe::info(null, 'Author ' . $element->id . ' added.');
+
+            return $element->id;
         }
 
         return null;
