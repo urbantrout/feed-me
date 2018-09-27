@@ -92,7 +92,7 @@ class Entries extends Field implements FieldInterface
             $criteria['status'] = null;
             $criteria['sectionId'] = $sectionIds;
             $criteria['limit'] = $limit;
-            $criteria[$match] = Db::escapeParam($dataValue);
+            $criteria['where'] = ['=', $match, Db::escapeParam($dataValue)];
 
             Craft::configure($query, $criteria);
 
@@ -145,7 +145,7 @@ class Entries extends Field implements FieldInterface
         $element->typeId = $typeId;
 
         if (!Craft::$app->getElements()->saveElement($element)) {
-            throw new \Exception(json_encode($element->getErrors()));
+            FeedMe::error(null, 'Entry error: Could not create - ' . json_encode($element->getErrors()));
         }
 
         return $element->id;

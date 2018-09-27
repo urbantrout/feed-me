@@ -7,6 +7,7 @@ use verbb\feedme\base\ElementInterface;
 
 use Craft;
 use craft\elements\Category as CategoryElement;
+use craft\helpers\Db;
 
 use Cake\Utility\Hash;
 
@@ -112,7 +113,10 @@ class Category extends Element implements ElementInterface
             $match = 'id';
         }
 
-        $element = CategoryElement::findOne([$match => $value]);
+        $element = CategoryElement::find()
+            ->status(null)
+            ->andWhere(['=', $match, Db::escapeParam($value)])
+            ->one();
 
         if ($element) {
             return $element->id;
@@ -125,7 +129,7 @@ class Category extends Element implements ElementInterface
             $element->groupId = $this->element->groupId;
 
             if (!Craft::$app->getElements()->saveElement($element)) {
-                throw new \Exception(json_encode($element->getErrors()));
+                FeedMe::error(null, 'Category error: Could not create parent - ' . json_encode($element->getErrors()));
             }
 
             FeedMe::info(null, 'Category ' . $element->id . ' added.');

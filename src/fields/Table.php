@@ -71,10 +71,18 @@ class Table extends Field implements FieldInterface
 
         foreach ($parsedData as $rowKey => $row) {
             foreach ($row as $columnKey => $column) {
-                $columnValues = explode($dataDelimiter, $column);
+                if (is_string($column)) {
+                    $columnValues = explode($dataDelimiter, $column);
 
-                foreach ($columnValues as $splitRowKey => $columnValue) {
-                    $preppedData[$splitRowKey][$columnKey] = $columnValue;
+                    if (count($columnValues) > 1) {
+                        foreach ($columnValues as $splitRowKey => $columnValue) {
+                            $preppedData[$splitRowKey][$columnKey] = $columnValue;
+                        }
+                    } else {
+                        $preppedData[$rowKey][$columnKey] = $column;
+                    }
+                } else {
+                    $preppedData[$rowKey][$columnKey] = $column;
                 }
             }
         }
