@@ -76,7 +76,7 @@ class Entries extends Field implements FieldInterface
                 $foundElements = $value;
                 break;
             }
-            
+
             $query = EntryElement::find();
 
             // In multi-site, there's currently no way to query across all sites - we use the current site
@@ -89,10 +89,12 @@ class Entries extends Field implements FieldInterface
                 }
             }
 
+            $prefix = Craft::$app->getFields()->oldFieldColumnPrefix;
+
             $criteria['status'] = null;
             $criteria['sectionId'] = $sectionIds;
             $criteria['limit'] = $limit;
-            $criteria['where'] = ['=', $match, Db::escapeParam($dataValue)];
+            $criteria['where'] = ['=', $prefix . $match, Db::escapeParam($dataValue)];
 
             Craft::configure($query, $criteria);
 
